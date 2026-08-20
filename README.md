@@ -4,7 +4,7 @@
 
 Agent skills for [Claude Code](https://claude.com/claude-code), distilled from things that actually went wrong during long, multi-agent development sessions.
 
-Four of the five share one property: **every failure they address points toward "looks successful."** A green test suite, a confident agent report, a clean `git status`, an audit that reads as thorough — none of them raise an error. Problems that raise errors don't need discipline; they surface on their own. These don't.
+Five of the six share one property: **every failure they address points toward "looks successful."** A green test suite, a confident agent report, a clean `git status`, an audit that reads as thorough — none of them raise an error. Problems that raise errors don't need discipline; they surface on their own. These don't.
 
 ## Install
 
@@ -53,6 +53,14 @@ Close out a batch of finished work before it reaches acceptance.
 - A batch is work sharing **one acceptance signal** — and one deferred defect contaminates that signal for everything in it
 - The defect ledger: entries the moment a report mentions them, cleared before acceptance, with whatever remains written down as bounded debt
 - A multi-lens final audit whose lenses must fail *differently*, plus adversarial confirmation before anything gets fixed
+
+### `codex-delegation`
+
+Run the Codex CLI as a detached background worker on a git worktree — dispatch, watch, relay, and prove what it claims.
+
+- A **sentinel quartet** on disk (`.log` / `.out` / `.before` / `.exit`) so a run's state is answerable without asking the agent — plus the check that catches a run which died *without* writing its exit code, where anything waiting on that file waits forever
+- **Relay** a finished read-only reviewer into fixing what it found, keeping its context, under one invariant: the run that changed the code is never the run that approves it
+- Why a passing suite proves nothing about a lock just written, and the two sharper demands — **independence** (`1 failed, N-1 passed`) and **reachability** (assertion sites, because red count is not lock count)
 
 ### `matt-skills-on-openspec`
 
