@@ -2,9 +2,7 @@
 
 [English](README.md) | **简体中文**
 
-给 [Claude Code](https://claude.com/claude-code) 用的 agent skill，全部从长时间、多 agent 的开发会话里提炼而来——每一个都是让某类反复出现的失败不再回来的那条纪律。
-
-它们大多对抗同一种漂移：代码库不断长出没人需要的实体，测试与门禁量的不是该量的东西，修复补了一个实例、却让这一类问题继续存活。给出的解法刻意是结构性的——评审能核对的规则、能对账的台账、双向失败的门禁——而不是「下次小心」式的提醒。
+一组 agent skill，适用于 [Claude Code](https://claude.com/claude-code) 以及其他支持 [Agent Skills](https://agentskills.io) 格式的编码 agent。每个 skill 各自独立，按需安装即可。
 
 ## 安装
 
@@ -12,95 +10,27 @@
 npx skills add shaokeyibb/hikarilan-skills
 ```
 
-该命令会读取仓库中的全部 skill，供你选择安装其中一部分或全部。
-
-只装某一个：
+该命令会列出仓库中的全部 skill，由你选择安装哪些。只装某一个：
 
 ```bash
-npx skills add shaokeyibb/hikarilan-skills --skill e2e-first-testing
+npx skills add shaokeyibb/hikarilan-skills --skill structural-fix
 ```
+
+加上 `-g` 则装到用户级，而不是当前项目。
 
 ## Skill 一览
 
-### 让代码库保持精简
-
-#### `minimal-design-gate` — 反过度设计关
-
-在方案阶段和交付阶段各过一次的反过度设计关。
-
-- 提方案前的五问——是否结构性？是否给调用方新增负担？系统能否自己确定？是否无端复杂？是否过拟合？——以及「为什么不能更简单」的最小方案说明
-- 交付清单：单调用方抽象、一个开关背后的两条路径、同一规则多处把关、为没出现过的场景加的兜底、没人读的配置、兼容垫片、只有测试台架才用的产品代码
-- 每次交付报净增减行数；没有逐行读完的部分，不下「没有过度设计」的结论
-
-#### `capability-pruning` — 能力盘点式精简
-
-以能力为单位精简项目，每一项删除都由负责人拍板。
-
-- 从规格与公开入口做全量盘点，绝不按某个指标只挑前几名
-- 每项能力一张证据卡片——用途、来由、规模、实际使用、主路径必需性——分批带推荐提问
-- 「从未用过」必须写明完整的检索范围；获批的删除自顶向下删到底，直到全仓按名搜索为零
-
-#### `structural-fix` — 结构性修复
-
-让一类缺陷整体消失，而不只是被报告的那一个实例。
-
-- 先给缺陷归类、写出它违反的规则，再在全仓扫出所有同类站点，一次改完
-- 先看数据结构：两类数据混在一个结构里时，拆开它，而不是在上面加过滤
-- 改输入而不是改输出；不按名字、类型或文案写特判；显式选择失败方向；退役能力要删到底
-
-### 测试、门禁与审计
-
-#### `e2e-first-testing` — E2E 优先的测试策略
-
-该写、该留、该删哪些测试。
-
-- 默认写经生产入口的端到端场景，结束时产出可复现的 run 目录与规范化结果清单
-- 替身只放在外部边界，且每个边界在生产代码里只有一个登记过的注入点；隔离测试必须在写代码之前先列全失败方式
-- 同义反复与变更探测测试见一个删一个；回归测试只为真实的行为缺口而加；旧测试按逐用例覆盖删减，附带 coverage.py 脚本
-
-#### `site-annotated-gates` — 站点标注式门禁
-
-用静态门禁守架构规则，例外就写在代码现场。
-
-- 结构规则做成 lint 阶段基于 AST 的检查，判据从生产定义推导，而不是写读源码的测试
-- 例外就地标注——`# gate-<规则>: <类别> — <理由>`——类别是闭集，理由必填
-- 双向棘轮：未标注的站点和过期的标注都报失败；附只用标准库的实现与一条示例规则
-
-#### `repo-audit-loop` — 审计循环
-
-审计整个仓库或一批已完成的工作，直到某一轮一个问题都找不到。
-
-- 覆盖台账按 `git ls-files` 对账到 100%；缺陷台账在任何报告提到未修缺陷的那一刻就登记
-- 互相正交的视角：完整的质量维度清单、规格与代码逐条同步判定、每个公开入口实际跑一遍、门禁盲区
-- 确认的发现由发现者接着修，存疑的先交给反驳者；验收与审计并行，不等审计归零
-
-### 构建 LLM Agent
-
-#### `llm-agent-surface` — 模型面设计
-
-Agent 框架在哪里止步、由模型来决定。
-
-- 语义归模型：判定路径上不用词表、不做子串匹配，四类精确的合法例外及其门禁做法
-- 能测的由框架测，模型只做选择；模型侧 schema 保持精简，不重复模型已经看得到的信息
-- 拒收只陈述被违反的规则；不加对模型结论的二次猜测分支；提示词改动要经得起「去掉实例」的检验；硬边界类型化；只留一层重试
-
-### 并行工作与工具接线
-
-#### `concurrent-worktrees` — 并发工作树
-
-用 git worktree 并行推进多条工作线，并在合并回来时不丢任何人的改动。
-
-- worktree 到底买来了什么、代价是什么（一棵新树没有环境），以及由此推出的打包规则
-- 编排者模式：谁建树、谁合并，以及破坏性 git 为什么永不下放
-- 未提交的工作不是存储；diff 要钉死 base SHA 而不是分支名；判断能否并行看的是**共享门禁**，不是文件是否重叠
-
-#### `matt-skills-on-openspec` — 把 matt skill 接到 OpenSpec 上
-
-把 [Matt Pocock 的工程 skill](https://github.com/mattpocock/skills) 接到以 [OpenSpec](https://github.com/Fission-AI/OpenSpec) change 作为工作项的仓库上。
-
-- 哪个 skill 对应哪份 change artifact 或哪条 `/opsx` 命令，逐节给出——且每一节只在你装了那个 skill 时才适用
-- 值得知道的模板冲突：一份 spec 怎么拆进三个 artifact、阻塞关系怎么落进线性清单
-- 完全不需要适配的那九个 skill
+| Skill | 用途 |
+|---|---|
+| [`capability-pruning`](skills/capability-pruning/SKILL.md) | 以能力为单位精简项目。先做全量盘点，再为每项能力写一张证据卡片，每一项删除都由负责人拍板。 |
+| [`concurrent-worktrees`](skills/concurrent-worktrees/SKILL.md) | 用 git worktree 并行推进多条工作线，合并回来时不丢任何人的改动。 |
+| [`e2e-first-testing`](skills/e2e-first-testing/SKILL.md) | 决定该写、该留、该删哪些测试。默认写经生产入口的端到端场景，替身只放在外部边界。附带按覆盖率删减旧测试的脚本。 |
+| [`llm-agent-surface`](skills/llm-agent-surface/SKILL.md) | 规定 agent 框架里模型能看到什么（工具 schema、提示词、拒收信息），以及框架在哪里止步、交给模型决定。 |
+| [`matt-skills-on-openspec`](skills/matt-skills-on-openspec/SKILL.md) | 把 [Matt Pocock 的工程 skill](https://github.com/mattpocock/skills) 接到以 [OpenSpec](https://github.com/Fission-AI/OpenSpec) change 作为工作项的仓库上。 |
+| [`minimal-design-gate`](skills/minimal-design-gate/SKILL.md) | 防过度设计，查两次：动手前查方案，交付后查成品。 |
+| [`repo-audit-loop`](skills/repo-audit-loop/SKILL.md) | 审计整个仓库或一批已完成的工作，一轮接一轮，直到某一轮什么都没找到。全程维护覆盖台账和缺陷台账。 |
+| [`site-annotated-gates`](skills/site-annotated-gates/SKILL.md) | 用静态检查守住架构规则。每个例外都在代码现场标注，过期的标注同样报失败。附只用标准库的实现。 |
+| [`structural-fix`](skills/structural-fix/SKILL.md) | 修复缺陷时让这一类问题整体消失，而不只修被报告的那一个实例。 |
 
 ## 许可
 
