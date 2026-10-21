@@ -1,6 +1,6 @@
 ---
 name: afk
-description: Autonomous work while the user is away, for any agent. Use when the user types /afk [duration or instructions], says they are going offline or leaving for N hours and you should decide for yourself (我要离线, 你自行决断), or says they are back (我回来了) during an afk. Start: 8 hours by default; decide on your own, park what you are unsure of or do it reversibly and let the user rule later, and schedule a check-in every 30 minutes to stay aligned. A duration given during an afk changes the deadline; no argument, or "I'm back", ends it with a summary and every open decision handed to the user.
+description: Autonomous work while the user is away, for any agent. Use when the user types /afk [duration or instructions], says they are going offline or leaving for N hours and you should decide for yourself (我要离线, 你自行决断), or says they are back (我回来了) during an afk. It defaults to 8 hours, decides on its own, parks what it is unsure of or does it reversibly and lets the user rule later, and schedules a check-in every 30 minutes to stay aligned. A duration given during an afk changes the deadline; no argument, or "I'm back", ends it with a summary and every open decision handed to the user.
 argument-hint: "[duration like 1h / 90m / until 7am] [other instructions]; no argument: starts an 8-hour afk, or ends the running one"
 ---
 
