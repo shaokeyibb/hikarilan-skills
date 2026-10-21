@@ -22,6 +22,7 @@ npx skills add shaokeyibb/hikarilan-skills --skill structural-fix
 
 | Skill | 用途 |
 |---|---|
+| [`afk`](skills/afk/) | 你不在的时候让 agent 继续干活。小事自己定，能回退的先做、其余挂起等你裁决，定时巡检对齐进度，你回来时给出一份总结，所有待裁决的事一并交给你。 |
 | [`capability-pruning`](skills/capability-pruning/) | 以能力为单位精简项目。先做全量盘点，再为每项能力写一张证据卡片，每一项删除都由负责人拍板。 |
 | [`concurrent-worktrees`](skills/concurrent-worktrees/) | 用 git worktree 并行推进多条工作线，合并回来时不丢任何人的改动。 |
 | [`e2e-first-testing`](skills/e2e-first-testing/) | 决定该写、该留、该删哪些测试。默认写经生产入口的端到端场景，替身只放在外部边界。附带按覆盖率删减旧测试的脚本。 |

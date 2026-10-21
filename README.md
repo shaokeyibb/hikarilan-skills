@@ -22,6 +22,7 @@ Add `-g` to install for your user rather than for the current project.
 
 | Skill | What it does |
 |---|---|
+| [`afk`](skills/afk/) | Keeps an agent working while you are away. It decides small things itself, does reversible work first and parks the rest for your ruling, checks in on a schedule, and hands you one summary with every open decision when you return. |
 | [`capability-pruning`](skills/capability-pruning/) | Slims a project one capability at a time. It builds a full inventory, writes an evidence card for each capability, and has the owner decide every removal. |
 | [`concurrent-worktrees`](skills/concurrent-worktrees/) | Runs several lines of work in parallel with git worktrees, then merges them back without losing anyone's changes. |
 | [`e2e-first-testing`](skills/e2e-first-testing/) | Decides which tests to write, keep or delete. Its default is an end-to-end scenario through the production entry point, with test doubles only at external boundaries. Includes a coverage script for pruning legacy suites. |
