@@ -29,6 +29,7 @@ npx skills add shaokeyibb/hikarilan-skills --skill structural-fix
 | [`llm-agent-surface`](skills/llm-agent-surface/) | 规定 agent 框架里模型能看到什么（工具 schema、提示词、拒收信息），以及框架在哪里止步、交给模型决定。 |
 | [`matt-skills-on-openspec`](skills/matt-skills-on-openspec/) | 把 [Matt Pocock 的工程 skill](https://github.com/mattpocock/skills) 接到以 [OpenSpec](https://github.com/Fission-AI/OpenSpec) change 作为工作项的仓库上。 |
 | [`minimal-design-gate`](skills/minimal-design-gate/) | 防过度设计，查两次：动手前查方案，交付后查成品。 |
+| [`progress`](skills/progress/) | 一个指令让 agent 回报当前进展，每次都是同一种表格：正在做、下一步、未完成、已完成、剩余时间与进度。额外参数就是额外的询问。 |
 | [`repo-audit-loop`](skills/repo-audit-loop/) | 审计整个仓库或一批已完成的工作，一轮接一轮，直到某一轮什么都没找到。全程维护覆盖台账和缺陷台账。 |
 | [`site-annotated-gates`](skills/site-annotated-gates/) | 用静态检查守住架构规则。每个例外都在代码现场标注，过期的标注同样报失败。附只用标准库的实现。 |
 | [`structural-fix`](skills/structural-fix/) | 修复缺陷时让这一类问题整体消失，而不只修被报告的那一个实例。 |

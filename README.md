@@ -29,6 +29,7 @@ Add `-g` to install for your user rather than for the current project.
 | [`llm-agent-surface`](skills/llm-agent-surface/) | Sets out what an LLM sees inside an agent framework (tool schemas, prompts, rejection messages) and where the framework stops and the model decides. |
 | [`matt-skills-on-openspec`](skills/matt-skills-on-openspec/) | Wires [Matt Pocock's engineering skills](https://github.com/mattpocock/skills) onto a repository whose work items are [OpenSpec](https://github.com/Fission-AI/OpenSpec) changes. |
 | [`minimal-design-gate`](skills/minimal-design-gate/) | Checks for over-design twice: on the proposal before building, and on the delivery after. |
+| [`progress`](skills/progress/) | One command makes the agent report where the work stands, as the same table every time: doing now, next, not done, done, time left and progress. Extra arguments are extra questions. |
 | [`repo-audit-loop`](skills/repo-audit-loop/) | Audits a whole repository, or a batch of finished work, in rounds until one finds nothing. It keeps a coverage ledger and a defect ledger throughout. |
 | [`site-annotated-gates`](skills/site-annotated-gates/) | Enforces architectural rules with static checks. Each exception is annotated at its code site, and the check fails on stale annotations too. Includes a standard-library implementation. |
 | [`structural-fix`](skills/structural-fix/) | Fixes a defect so that its whole class goes away, not just the instance that was reported. |
