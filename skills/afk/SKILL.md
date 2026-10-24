@@ -1,6 +1,6 @@
 ---
 name: afk
-description: Autonomous work while the user is away, for any agent. Use when the user types /afk [duration or instructions], says they are going offline or leaving for N hours and you should decide for yourself (我要离线, 你自行决断), or says they are back (我回来了) during an afk. It defaults to 8 hours, decides on its own, parks what it is unsure of or does it reversibly and lets the user rule later, and schedules a check-in every 30 minutes to stay aligned. A duration given during an afk changes the deadline; no argument, or "I'm back", ends it with a summary and every open decision handed to the user.
+description: Autonomous work while the user is away, for any agent. Use when the user types /afk [duration or instructions], says they are going offline or leaving for N hours and you should decide for yourself (我要离线, 你自行决断), or says they are back (我回来了) during an afk. It defaults to 8 hours, decides on its own, parks what it is unsure of or does it reversibly and lets the user rule later, and schedules a check-in every 30 minutes to stay aligned. When the deadline passes, the afk limits lift and the work carries on. A duration given during an afk changes the deadline; no argument, or "I'm back", ends it with a summary and every open decision handed to the user.
 argument-hint: "[duration like 1h / 90m / until 7am] [other instructions]; no argument: starts an 8-hour afk, or ends the running one"
 ---
 
@@ -32,7 +32,6 @@ The ledger directory is `${AFK_DIR:-/tmp/afk-$(id -u)}`. It is not under `~/.age
 | active | a duration only | "Change the duration" |
 | active | none, or "I'm back" / "back" / 我回来了 | "Wrap up" (user-present version) |
 | active | anything else | Do what the arguments ask (change the check-in interval, change the scope, report status, ...) and record it under "Instruction changes"; if there is also a duration, change that too |
-| expired (deadline reached, waiting for rulings) | anything | First run step 2 of the user-present wrap-up, settle every ruling on the old ledger and set it to `ended`; then handle any new afk request in the arguments as "Start" |
 
 When the state is active, also confirm the wake-up is alive. Claude Code: `CronList` shows an `[AFK-TICK]` job. Other agents: the modification time of `<ledger without .md>.ticker.log` is no older than check-in interval plus 2 minutes (`wake: selfloop` needs no check). If it is gone, the session restarted or the process was killed: tell the user and rebuild the wake-up.
 
@@ -103,7 +102,7 @@ The new deadline is now plus the given duration; if the text starts with "extend
 
 ## Wrap up
 
-First stop at a safe point: finish the atomic operation in hand and leave no half-written change. Then stop the wake-up. Claude Code: `CronDelete` both jobs. Ticker: set the ledger's `status` to `expired` or `ended` and it exits silently when it wakes (do not `kill` it; a sandbox cannot reach it). Self-driven loop: nothing to do.
+First stop at a safe point: finish the atomic operation in hand and leave no half-written change. Then stop the wake-up. Claude Code: `CronDelete` both jobs. Ticker: set the ledger's `status` to `ended` and it exits silently when it wakes (do not `kill` it; a sandbox cannot reach it). Self-driven loop: nothing to do.
 
 **User-present version** (the user is back, or `/afk` with no argument):
 1. Summarize, in the user's language, conclusion first:
@@ -113,9 +112,9 @@ First stop at a safe point: finish the atomic operation in hand and leave no hal
    - Exceptions and risks: failures, unfinished work, anything outside the original scope
    - Pending rulings (B and C): for each, the question, the options, your recommendation, and how far a B item has gone
 2. **Hand every open decision to the user.** Use the way to ask from "Capabilities by agent", recommended option first. Claude Code's `AskUserQuestion` takes at most 4 questions per round; with more than 4 items, first ask "all as recommended / one by one", and other agents do the same. With nothing to rule, say "nothing to rule" explicitly.
-3. Carry out the rulings: keep a B item = finalize it, drop it = revert it as the ledger says; after a C ruling, go on with it. Set the ledger's `status: ended` and add a closing summary.
+3. Carry out the rulings: keep a B item = finalize it, drop it = revert it as the ledger says; after a C ruling, go on with it. Set the ledger's `status: ended` and add a closing summary. Then carry on with the rest of the task as in an ordinary session.
 
-**Deadline version** (`[AFK-END]`, or a check-in finds the deadline passed; the user is probably away):
-1. Write the same summary straight into the reply and into the ledger; set `status: expired`.
+**Deadline version** (`[AFK-END]`, or a check-in finds the deadline passed; the user is probably away). The afk is over, the work is not. What ends here is the set of limits afk put on you (no asking, no elevation, parking, reversible form only), not the task.
+1. Write the same summary straight into the reply and into the ledger; set `status: ended`.
 2. Notify once: `afk deadline: finished <highlights>, <N> items waiting for a ruling`.
-3. **Do not ask**, do no more work, and wait for the user. When they return (any message, or `/afk`), if open items remain, run step 2 of the user-present version; do not repeat the summary already given at the deadline, only add what happened since.
+3. **Carry on with the task as in an ordinary session.** Keep going with whatever is unblocked. Bring each open decision (B and C) to the user the ordinary way, with the "Ask the user" row: once nothing unblocked is left, or sooner if the next step depends on the answer. Do not sit idle waiting for the user to come back.

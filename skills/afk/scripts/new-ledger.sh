@@ -11,7 +11,7 @@ mkdir -p "$dir"
 f=$dir/$(date +%Y%m%d-%H%M%S).md
 cat >"$f" <<EOF
 ---
-status: active   # active | expired (deadline reached, waiting for the user) | ended (wrapped up)
+status: active   # active | ended (the afk is over)
 agent: $agent
 session: $session
 cwd: $PWD
@@ -22,8 +22,8 @@ wake: pending   # cron tick=<id> end=<id> | ticker cmd=<recipe name> | selfloop
 # afk ledger
 Task: $task
 ## Check-in procedure (run on every [AFK-TICK], or at each check-in point of a self-driven loop)
-1. If this ledger's status is not active (expired / ended), this is a late check-in: ignore it and answer in one sentence.
-2. Run date. If the deadline has passed, follow the afk skill's "Wrap up (deadline version)" and do no more work.
+1. If this ledger's status is not active (ended), this is a late check-in: ignore it and answer in one sentence.
+2. Run date. If the deadline has passed, follow the afk skill's "Wrap up (deadline version)": the afk limits end and the work carries on.
 3. Align progress: what was done since the last check-in, what is stuck, what is next. Append one line under "Progress".
 4. Re-check "Parked" items; unpark any whose blocker has gone (CI finished, dependency arrived, ...).
 5. Continue with the most valuable unblocked item. If there is nothing to do, do not invent work: log it and end the turn.

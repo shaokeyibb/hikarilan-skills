@@ -13,7 +13,7 @@ Keeps an agent working while you are away. Tell it how long you will be gone (8 
 | `/afk 2h only touch docs/` | A duration plus instructions. Other text during an afk is followed as an instruction. |
 | "I'm back" | Wraps up: a summary, then every pending decision handed to you to rule on. |
 
-Decisions fall into three tiers: **A** decide yourself, **B** do it in a reversible form and let the user rule later, **C** park. Everything is recorded in a ledger under `/tmp/afk-<uid>/`, so it survives a context compaction.
+Decisions fall into three tiers: **A** decide yourself, **B** do it in a reversible form and let the user rule later, **C** park. Everything is recorded in a ledger under `/tmp/afk-<uid>/`, so it survives a context compaction. When the deadline passes, the afk limits lift and the agent carries on with the task; it does not stop to wait for you.
 
 ## How it works on each agent
 
